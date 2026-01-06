@@ -9,12 +9,24 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
+    public function index()
+    {
+        $user = Auth::user();
+        $recentOrders = Order::where('user_id', $user->id)
+            ->with(['items.product'])
+            ->latest()
+            ->take(5)
+            ->get();
+
+        return view('frontend.user.index', compact('user', 'recentOrders'));
+    }
+
     public function orders()
     {
         $orders = Order::where('user_id', Auth::id())
             ->with(['items.product'])
             ->latest()
-            ->paginate(5);
+            ->paginate(10); // Changed pagination to 10 for better view
 
         return view('frontend.user.orders', compact('orders'));
     }

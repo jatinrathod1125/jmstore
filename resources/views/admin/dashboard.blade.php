@@ -13,7 +13,7 @@
                 </div>
                 <div>
                     <p class="text-sm text-gray-500 font-medium">Total Orders</p>
-                    <p class="text-2xl font-bold text-gray-800">1,254</p>
+                    <p class="text-2xl font-bold text-gray-800">{{ $totalOrders }}</p>
                 </div>
             </div>
         </div>
@@ -29,7 +29,7 @@
                 </div>
                 <div>
                     <p class="text-sm text-gray-500 font-medium">Total Revenue</p>
-                    <p class="text-2xl font-bold text-gray-800">₹4,25,000</p>
+                    <p class="text-2xl font-bold text-gray-800">₹{{ number_format($totalRevenue, 2) }}</p>
                 </div>
             </div>
         </div>
@@ -45,7 +45,7 @@
                 </div>
                 <div>
                     <p class="text-sm text-gray-500 font-medium">Customers</p>
-                    <p class="text-2xl font-bold text-gray-800">3,400</p>
+                    <p class="text-2xl font-bold text-gray-800">{{ $totalCustomers }}</p>
                 </div>
             </div>
         </div>
@@ -60,7 +60,7 @@
                 </div>
                 <div>
                     <p class="text-sm text-gray-500 font-medium">Total Products</p>
-                    <p class="text-2xl font-bold text-gray-800">540</p>
+                    <p class="text-2xl font-bold text-gray-800">{{ $totalProducts }}</p>
                 </div>
             </div>
         </div>
@@ -80,30 +80,24 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
-                    <tr class="hover:bg-gray-50">
-                        <td class="py-3 px-4 font-medium text-green-600">#ORD-2541</td>
-                        <td class="py-3 px-4">Rahul Kumar</td>
-                        <td class="py-3 px-4">Jan 05, 2026</td>
-                        <td class="py-3 px-4"><span
-                                class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs">Pending</span></td>
-                        <td class="py-3 px-4">₹1,250</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50">
-                        <td class="py-3 px-4 font-medium text-green-600">#ORD-2540</td>
-                        <td class="py-3 px-4">Priya Singh</td>
-                        <td class="py-3 px-4">Jan 04, 2026</td>
-                        <td class="py-3 px-4"><span
-                                class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">Delivered</span></td>
-                        <td class="py-3 px-4">₹850</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50">
-                        <td class="py-3 px-4 font-medium text-green-600">#ORD-2539</td>
-                        <td class="py-3 px-4">Amit Sharma</td>
-                        <td class="py-3 px-4">Jan 04, 2026</td>
-                        <td class="py-3 px-4"><span
-                                class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs">Processing</span></td>
-                        <td class="py-3 px-4">₹2,400</td>
-                    </tr>
+                    @forelse($recentOrders as $order)
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-3 px-4 font-medium text-green-600">#{{ $order->id }}</td>
+                            <td class="py-3 px-4">{{ $order->user ? $order->user->name : 'Guest' }}</td>
+                            <td class="py-3 px-4">{{ $order->created_at->format('M d, Y') }}</td>
+                            <td class="py-3 px-4">
+                                <span
+                                    class="px-2 py-1 rounded text-xs {{ $order->status == 'completed' ? 'bg-green-100 text-green-700' : ($order->status == 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700') }}">
+                                    {{ ucfirst($order->status) }}
+                                </span>
+                            </td>
+                            <td class="py-3 px-4">₹{{ number_format($order->total, 2) }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="px-4 py-3 text-center text-sm text-gray-500">No recent orders.</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>

@@ -24,11 +24,22 @@ Route::name('cart.add')->post('/cart/add', [CartController::class, 'add']);
 Route::name('cart.remove')->post('/cart/remove', [CartController::class, 'remove']);
 Route::name('cart.update')->post('/cart/update', [CartController::class, 'update']);
 
+// Frontend Auth Routes
+Route::middleware('guest')->group(function () {
+    Route::get('login', [App\Http\Controllers\Frontend\AuthController::class, 'login'])->name('login');
+    Route::post('login', [App\Http\Controllers\Frontend\AuthController::class, 'authenticate']);
+    Route::get('register', [App\Http\Controllers\Frontend\AuthController::class, 'register'])->name('register');
+    Route::post('register', [App\Http\Controllers\Frontend\AuthController::class, 'store']);
+});
+
+Route::post('logout', [App\Http\Controllers\Frontend\AuthController::class, 'logout'])->name('logout')->middleware('auth');
+
 Route::middleware(['auth'])->group(function () {
     Route::name('checkout.index')->get('/checkout', [CheckoutController::class, 'index']);
     Route::name('checkout.store')->post('/checkout', [CheckoutController::class, 'store']);
     Route::name('checkout.success')->get('/checkout/success/{order}', [CheckoutController::class, 'success']);
 
+    Route::name('user.dashboard')->get('/my-account', [UserController::class, 'index']);
     Route::name('user.orders')->get('/my-orders', [UserController::class, 'orders']);
 });
 

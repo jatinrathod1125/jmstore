@@ -4,7 +4,7 @@
 
 <!-- Hero Slider -->
 <div class="relative bg-gray-200">
-    <div x-data="{ activeSlide: 0, slides: [{{ $sliders->count() }}] }" class="relative h-64 md:h-96">
+    <div x-data="{ activeSlide: 0, slides: [{{ $sliders->count() }}] }" class="relative h-[700px]">
         @if($sliders->count() > 0)
             @foreach($sliders as $index => $slider)
                 <div x-show="activeSlide === {{ $index }}" class="absolute inset-0 w-full h-full transition duration-500 transform">
