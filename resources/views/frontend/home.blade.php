@@ -3,26 +3,92 @@
 @section('content')
 
 <!-- Hero Slider -->
-<div class="relative bg-gray-200">
-    <div x-data="{ activeSlide: 0, slides: [{{ $sliders->count() }}] }" class="relative h-[700px]">
-        @if($sliders->count() > 0)
-            @foreach($sliders as $index => $slider)
-                <div x-show="activeSlide === {{ $index }}" class="absolute inset-0 w-full h-full transition duration-500 transform">
-                    <img src="{{ Storage::url($slider->image) }}" alt="{{ $slider->title }}" class="w-full h-full object-cover">
+<div class="relative bg-gray-900 overflow-hidden group" x-data="{ 
+    activeSlide: 0, 
+    slides: {{ $sliders->count() }}, 
+    interval: null,
+    startTimer() { this.interval = setInterval(() => { this.activeSlide = (this.activeSlide === this.slides - 1) ? 0 : this.activeSlide + 1 }, 5000); },
+    stopTimer() { clearInterval(this.interval); } 
+}" x-init="startTimer()" @mouseenter="stopTimer()" @mouseleave="startTimer()">
+    
+    <div class="relative h-[500px] md:h-[600px]">
+        @forelse($sliders as $index => $slider)
+            <div x-show="activeSlide === {{ $index }}" 
+                 x-transition:enter="transition ease-out duration-700"
+                 x-transition:enter-start="opacity-0 transform scale-105"
+                 x-transition:enter-end="opacity-100 transform scale-100"
+                 x-transition:leave="transition ease-in duration-700"
+                 x-transition:leave-start="opacity-100 transform scale-100"
+                 x-transition:leave-end="opacity-0 transform scale-95"
+                 class="absolute inset-0 w-full h-full">
+                
+                <!-- Image -->
+                <div class="absolute inset-0 bg-black/40 z-10"></div>
+                <img src="{{ Storage::url($slider->image) }}" alt="{{ $slider->title }}" class="w-full h-full object-cover">
+                
+                <!-- Content -->
+                <div class="absolute inset-0 z-20 flex items-center justify-center text-center px-4">
+                    <div class="max-w-3xl space-y-6">
+                        @if($slider->title)
+                            <h1 x-show="activeSlide === {{ $index }}"
+                                x-transition:enter="transition ease-out duration-700 delay-300"
+                                x-transition:enter-start="opacity-0 translate-y-8"
+                                x-transition:enter-end="opacity-100 translate-y-0"
+                                class="text-4xl md:text-6xl font-bold text-white tracking-tight drop-shadow-lg">
+                                {{ $slider->title }}
+                            </h1>
+                        @endif
+                        
+                        @if($slider->description)
+                            <p x-show="activeSlide === {{ $index }}"
+                               x-transition:enter="transition ease-out duration-700 delay-500"
+                               x-transition:enter-start="opacity-0 translate-y-8"
+                               x-transition:enter-end="opacity-100 translate-y-0"
+                               class="text-lg md:text-xl text-gray-200 font-medium drop-shadow-md">
+                                {{ $slider->description }}
+                            </p>
+                        @endif
+
+                        @if($slider->link)
+                            <div x-show="activeSlide === {{ $index }}"
+                                 x-transition:enter="transition ease-out duration-700 delay-700"
+                                 x-transition:enter-start="opacity-0 translate-y-8"
+                                 x-transition:enter-end="opacity-100 translate-y-0">
+                                <a href="{{ $slider->link }}" class="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-8 rounded-full shadow-lg transform hover:-translate-y-1 transition duration-300">
+                                    {{ $slider->link_text ?? 'Shop Now' }}
+                                </a>
+                            </div>
+                        @endif
+                    </div>
                 </div>
-            @endforeach
-             
-            <!-- Controls (Simple) -->
-             <div class="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">   
+            </div>
+        @empty
+            <!-- Placeholder if no slides -->
+            <div class="w-full h-full flex flex-col items-center justify-center bg-gray-800 text-white">
+                <svg class="w-16 h-16 text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                <span class="text-gray-400 font-medium text-lg">No Banners Configured</span>
+                <p class="text-gray-500 text-sm mt-2">Go to Admin Panel to add banners.</p>
+            </div>
+        @endforelse
+
+        <!-- Indicators -->
+        @if($sliders->count() > 1)
+            <div class="absolute bottom-6 left-0 right-0 z-30 flex justify-center space-x-3">
                 @foreach($sliders as $index => $slider)
-                    <button @click="activeSlide = {{ $index }}" class="h-2 w-2 rounded-full" :class="activeSlide === {{ $index }} ? 'bg-green-600' : 'bg-gray-400'"></button>
+                    <button @click="activeSlide = {{ $index }}" 
+                            class="h-3 w-3 rounded-full transition-all duration-300 focus:outline-none"
+                            :class="activeSlide === {{ $index }} ? 'bg-green-500 w-8' : 'bg-white/50 hover:bg-white'">
+                    </button>
                 @endforeach
             </div>
-        @else
-            <!-- Placeholder -->
-            <div class="w-full h-full flex items-center justify-center bg-gray-300">
-                <span class="text-gray-500 font-bold text-xl">No Banners Configured</span>
-            </div>
+
+            <!-- Pre/Next Buttons -->
+            <button @click="activeSlide = (activeSlide === 0) ? slides - 1 : activeSlide - 1" class="absolute left-4 top-1/2 transform -translate-y-1/2 z-30 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm transition opacity-0 group-hover:opacity-100 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+            </button>
+            <button @click="activeSlide = (activeSlide === slides - 1) ? 0 : activeSlide + 1" class="absolute right-4 top-1/2 transform -translate-y-1/2 z-30 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm transition opacity-0 group-hover:opacity-100 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+            </button>
         @endif
     </div>
 </div>

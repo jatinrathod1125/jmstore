@@ -25,7 +25,9 @@ class BannerController extends Controller
         $validated = $request->validate([
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'title' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
             'link' => 'nullable|string|max:255',
+            'link_text' => 'nullable|string|max:255',
             'type' => 'required|string|in:home_slider,promo_small',
             'status' => 'boolean',
         ]);
@@ -50,7 +52,9 @@ class BannerController extends Controller
         $validated = $request->validate([
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'title' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
             'link' => 'nullable|string|max:255',
+            'link_text' => 'nullable|string|max:255',
             'type' => 'required|string|in:home_slider,promo_small',
             'status' => 'boolean',
         ]);
