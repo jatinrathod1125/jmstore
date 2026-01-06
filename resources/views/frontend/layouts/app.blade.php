@@ -141,9 +141,9 @@
                 <div>
                     <h4 class="font-semibold mb-3">Links</h4>
                     <ul class="text-sm text-gray-400 space-y-2">
-                        <li><a href="#" class="hover:text-white">About Us</a></li>
-                        <li><a href="#" class="hover:text-white">Contact Us</a></li>
-                        <li><a href="#" class="hover:text-white">Terms of Service</a></li>
+                        <li><a href="{{ route('about') }}" class="hover:text-white">About Us</a></li>
+                        <li><a href="{{ route('contact') }}" class="hover:text-white">Contact Us</a></li>
+                        <li><a href="{{ route('terms') }}" class="hover:text-white">Terms of Service</a></li>
                     </ul>
                 </div>
                 <div>

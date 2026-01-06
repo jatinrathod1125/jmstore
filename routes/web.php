@@ -14,9 +14,13 @@ use App\Http\Controllers\Frontend\ProductController as FrontendProductController
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\CheckoutController;
 use App\Http\Controllers\Frontend\UserController;
+use App\Http\Controllers\Frontend\PageController;
 
 // Frontend Routes
 Route::name('home')->get('/', [HomeController::class, 'index']);
+Route::name('about')->get('/about-us', [PageController::class, 'about']);
+Route::name('contact')->get('/contact-us', [PageController::class, 'contact']);
+Route::name('terms')->get('/terms-of-service', [PageController::class, 'terms']);
 Route::name('products.index')->get('/products', [FrontendProductController::class, 'index']);
 Route::name('products.show')->get('/products/{slug}', [FrontendProductController::class, 'show']);
 Route::name('cart.index')->get('/cart', [CartController::class, 'index']);
